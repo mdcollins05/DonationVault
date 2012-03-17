@@ -45,25 +45,26 @@ public class Donationvault extends JavaPlugin implements Listener {
                     return false;
                 }
             }
-            if (getServer().getPlayer(args[0]) != null) {
-                Player player = getServer().getPlayer(args[0]);
-                if (player instanceof Player) {
-                    //cs.sendMessage("giving " + player.getName() + " " + donateToEcon(Double.valueOf(args[1])));
-                    try {
-                        Double.valueOf(args[1]);
-                    } catch (NumberFormatException e) {
-                        return false;
+            if (economy.hasAccount(args[0])) {
+                try {
+                    Double.valueOf(args[1]);
+                } catch (NumberFormatException e) {
+                    return false;
+                }
+                Double inGameMoney = donateToEcon(Double.valueOf(args[1]));
+                EconomyResponse r = economy.depositPlayer(args[0], inGameMoney);
+                if (r.transactionSuccess()) {
+                    if (getServer().getPlayer(args[0]) != null) {
+                        getServer().getPlayer(args[0]).sendMessage("You were credited for your donation of $" + args[1] + " with " + inGameMoney + " in-game money!");
                     }
-                    EconomyResponse r = economy.depositPlayer(player.getName(), donateToEcon(Double.valueOf(args[1])));
-                    if (r.transactionSuccess()) {
-                        return true;
-                    } else {
-                        cs.sendMessage(ChatColor.RED + "Error occured crediting to account.");
-                        return false;
-                    }
+                    cs.sendMessage(args[0] + " was credited for their donation of $" + args[1] + " with " + inGameMoney + " in-game money!");
+                    return true;
+                } else {
+                    cs.sendMessage(ChatColor.RED + "Error occured crediting to account.");
+                    return false;
                 }
             } else {
-                cs.sendMessage(ChatColor.RED + "Player not online.");
+                cs.sendMessage(ChatColor.RED + "Player not found.");
                 return false;
             }
         } else if (args.length == 1) {
@@ -73,13 +74,14 @@ public class Donationvault extends JavaPlugin implements Listener {
                     return false;
                 }
             }
-            
+
             try {
                 Double.valueOf(args[0]);
             } catch (NumberFormatException e) {
                 return false;
             }
-            cs.sendMessage("Donating $" + args[0] + " would give you $" + donateToEcon(Double.valueOf(args[1])) + " in-game.");
+            cs.sendMessage("Donating $" + args[0] + " would give you $" + donateToEcon(Double.valueOf(args[0])) + " in-game.");
+            return true;
         }
         return false;
     }
