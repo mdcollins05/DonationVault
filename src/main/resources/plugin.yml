@@ -6,7 +6,7 @@ main: com.blockmovers.plugins.donationvault.Donationvault
 name: DonationVault
 startup: postworld
 url: http://blockmovers.com/
-version: '0.1'
+version: '${version}'
 commands:
   donationvault:
     usage: /<command> [player] [amount]
